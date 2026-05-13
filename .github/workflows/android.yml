@@ -3,30 +3,32 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
     steps:
       - uses: actions/checkout@v4
 
       - name: Python Kurulumu
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
+
+      - name: JDK 17 Kurulumu
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Sistem Paketlerini Yukle
         run: |
           sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
-          pip3 install --upgrade pip
-          pip3 install buildozer kivy
+          sudo apt install -y git zip unzip python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+          pip3 install --user --upgrade pip
+          pip3 install --user buildozer kivy Cython==0.29.33
 
       - name: APK Uret
         run: |
+          export PATH=$PATH:$HOME/.local/bin
           buildozer android debug
-        continue-on-error: false
-
-      - name: APK Dosyasini Yukle
-        uses: actions/upload-artifact@v4
-        with:
-          name: NoxPlayer-Android-APK
-          path: bin/*.apk
           
