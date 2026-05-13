@@ -1,21 +1,21 @@
-name: APK Oluşturucu
+name: APK Olusturucu
 on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - name: Buildozer ile APK Üret
+      - name: Buildozer ile APK Uret
         uses: ArtemSBulgakov/buildozer-action@v1
         with:
           buildozer_version: master
           command: buildozer android debug
           repository_root: .
 
-      - name: APK Dosyasını Yükle (Artifact)
-        uses: actions/upload-artifact@v2
+      - name: APK Dosyasini Yukle (Artifact)
+        uses: actions/upload-artifact@v4
         with:
           name: NoxPlayer-APK
           path: bin/*.apk
