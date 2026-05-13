@@ -1,22 +1,32 @@
-name: APK Olusturucu
+name: NoxPlayer APK Build
 on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
 
-      - name: Buildozer ile APK Uret
-        uses: ArtemSBulgakov/buildozer-action@v1
+      - name: Python Kurulumu
+        uses: actions/setup-python@v5
         with:
-          buildozer_version: master
-          command: buildozer android debug
-          repository_root: .
+          python-version: '3.10'
 
-      - name: APK Dosyasini Yukle (Artifact)
+      - name: Sistem Paketlerini Yukle
+        run: |
+          sudo apt update
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+          pip3 install --upgrade pip
+          pip3 install buildozer kivy
+
+      - name: APK Uret
+        run: |
+          buildozer android debug
+        continue-on-error: false
+
+      - name: APK Dosyasini Yukle
         uses: actions/upload-artifact@v4
         with:
-          name: NoxPlayer-APK
+          name: NoxPlayer-Android-APK
           path: bin/*.apk
           
